@@ -1,0 +1,43 @@
+C++
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        
+        std::unordered_map<int, int> map;
+        std::unordered_map<int, int>::iterator it;
+        int size = nums.size();
+        
+        for (int i = 0; i < size; i++){
+            map[target - nums[i]] = i;
+        }
+        
+        for (int j = 0; j < size; j++){
+            it = map.find(nums[j]);
+            if (it != map.end() && j != it->second){
+                return vector<int> {j , it->second};
+            }
+        }
+    }
+};
+
+*unordered_map(Hash Table) instead of map(Red Black Tree)
+https://blog.csdn.net/ljlstart/article/details/51335687
+http://bookshadow.com/weblog/2015/04/02/advantages-of-bst-over-hash-table/
+speed up 1 ms in this case
+*some time it speed down 1 ms
+However, I think Hash Table is still better in this situation
+I think the main point is that hash table use space for time compare to red black tree
+
+*index = std::distance(map.begin(), std::find(map.begin(),map.end(),nums[j]));
+vector instead of map
+speed down	~15 times 
+
+*int size = nums.size();
+speed up	1 ms in this case
+
+*use return {j , it->second}; in stead of return vector<int> {j , it->second};
+speed down	2 ms 
+
+*using auto type didn't slow down the run time
+it work in compile time

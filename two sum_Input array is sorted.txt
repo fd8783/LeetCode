@@ -1,0 +1,35 @@
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+                
+        int size = nums.size();
+        int start = 0, end = size-1, mid = end/2, temp;
+        
+        while (end > start){
+            temp = nums[start]+nums[end];
+            if (temp == target)
+                return vector<int> {start+1,end+1};
+            else if (temp > target){
+                if (nums[start]+nums[mid] >= target)
+                    end = mid;
+                else
+                    end--;
+            }
+            else{
+                if (nums[end]+nums[mid] <= target)
+                    start = mid;
+                else
+                    start++;
+            }
+            mid = (end+start)/2;
+        }
+            
+        return vector<int> {-1,-1};
+    }
+};
+
+*binary search
+
+*int start = 0 < this is a global state??
+can't type int start;
+otherwise it didn't initizal in new function call

@@ -1,0 +1,211 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        int carry = 0, sum;
+        ListNode* headNode = NULL;
+        ListNode* curNode = NULL;
+        ListNode* sumNode = NULL;
+        
+        //first node
+        sum = l1->val + l2->val;
+        if (sum > 9){
+            carry = 1;
+            sum -= 10;
+        }
+        headNode = new ListNode(sum);
+        curNode = headNode;
+        l1 = l1->next;
+        l2 = l2->next;
+        
+        while (l1){
+            if (l2){
+                sum = l1->val + l2->val + carry;
+                carry = sum > 9;
+                sum -= 10 * carry;
+                l2 = l2->next;
+            }
+            else{
+                sum = l1->val + carry;
+                carry = sum > 9;
+                sum -= 10 * carry;
+            }
+            l1 = l1->next;
+            sumNode = new ListNode(sum);
+            curNode = curNode->next = sumNode;
+        }
+        
+        while (l2){
+            sum = l2->val + carry;
+            carry = sum > 9;
+            sum -= 10 * carry;
+            l2 = l2->next;
+            sumNode = new ListNode(sum);
+            curNode = curNode->next = sumNode;
+        }
+        
+        //last Node
+        if (carry){
+            sumNode = new ListNode(1);
+            curNode = curNode->next = sumNode;
+        }
+        
+        return headNode;
+    }
+};
+
+*if I add 
+        delete curNode;
+        delete sumNode;
+						before return
+it return Error like "double free or corruption (top): 0x0000000001d57fd0 ***"
+seems it delete for me?						
+
+*WTF
+is comment slowing down the speed ?
+
+
+*old version, use too much if, slow down for ~25%
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        int carry = 0, sum = 0;
+        ListNode* headNode = new ListNode(0);
+        ListNode* curNode = new ListNode(0);
+        ListNode* sumNode = new ListNode(0);
+        
+        //first node
+        sum = l1->val + l2->val;
+        if (sum > 9){
+            carry = 1;
+            sum -= 10;
+        }
+        headNode = new ListNode(sum);
+        curNode = headNode;
+        
+        while (l1->next != NULL){
+            l1 = l1->next;
+            if (l2->next != NULL){
+                l2 = l2->next;
+                
+                if (carry == 1){
+                    sum = l1->val + l2->val + 1;
+                    carry=0;
+                }
+                else{
+                    sum = l1->val + l2->val;
+                }
+                
+                if (sum > 9){
+                    carry = 1;
+                    sum -= 10;
+                }
+            }
+            else{
+                if (carry == 1){
+                    sum = l1->val + 1;
+                    carry=0;
+                                    
+                    if (sum > 9){
+                        carry = 1;
+                        sum -= 10;
+                    }
+                }
+                else{
+                    sum = l1->val;
+                }
+            }
+            sumNode = new ListNode(sum);
+            curNode->next = sumNode;
+            curNode = sumNode;
+        }
+        
+        while (l2->next != NULL){
+            l2 = l2->next;
+            if (carry == 1){
+                sum = l2->val + 1;
+                carry=0;
+                                
+                if (sum > 9){
+                    carry = 1;
+                    sum -= 10;
+                }
+            }
+            else{
+                sum = l2->val;
+            }
+            
+            sumNode = new ListNode(sum);
+            curNode->next = sumNode;
+            curNode = sumNode;
+        }
+        
+        //last Node
+        if (carry == 1){
+            sumNode = new ListNode(1);
+            curNode->next = sumNode;
+            curNode = sumNode;
+        }
+        
+        return headNode;
+    }
+};
+
+
+//try to not set a new ListNode every loop
+//but seems not improving the speed
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        int carry = 0, sum;
+        ListNode* cur = NULL;
+        ListNode* head = l1;
+        
+        while (l1){
+            cur = l1;
+            if (l2){
+                sum = l1->val + l2->val + carry;
+                carry = sum > 9;
+                sum -= 10 * carry;
+                l2 = l2->next;
+                l1->val = sum;
+                l1 = l1->next;
+            }
+            else{
+                sum = l1->val + carry;
+                carry = sum > 9;
+                sum -= 10 * carry;
+                l1->val = sum;
+                l1 = l1->next;
+            }
+        }
+        
+        if (l2){
+            l1 = cur->next = l2;
+        }
+        
+        while (l1){
+            cur = l1;
+            sum = l1->val + carry;
+            carry = sum > 9;
+            sum -= 10 * carry;
+            l1->val = sum;
+            l1 = l1->next;
+        }
+        
+        if (carry){
+            ListNode* last = new ListNode(1);
+            cur->next = last;
+        }
+        
+        return head;
+    }
+};
+

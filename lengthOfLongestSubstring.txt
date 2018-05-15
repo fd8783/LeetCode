@@ -1,0 +1,36 @@
+
+*use vector
+class Solution {
+public:
+int lengthOfLongestSubstring(string s) {
+        vector<int> dict(128, -1);	//or 256 include more 
+        int maxLen = 0, start = -1;
+        for (int i = 0; i != s.length(); i++) {
+            if (dict[s[i]] > start)
+                start = dict[s[i]];
+            dict[s[i]] = i;
+            maxLen = max(maxLen, i - start);
+        }
+        return maxLen;
+    }
+};
+
+*we can treat char to int according to ASCII table directly in c++
+
+*use map
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+		if (s.length()==0) return 0;
+		map<char, int> cmap;
+		int start = -1;
+		int maxlen = 0;
+		for (int i = 0; i < s.length(); i++){
+				if (cmap.find(s[i]) != cmap.end())
+						start = max(start, cmap[s[i]]);
+				maxlen = max(maxlen, i-start);
+				cmap[s[i]] = i;
+		}
+		return maxlen;
+}
+};
